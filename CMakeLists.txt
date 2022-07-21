@@ -10,11 +10,7 @@ project(akd_ethercat_lib)
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     message_generation
-)
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
+)#########################################
 
 ## Generate messages in the 'msg' folder
 add_message_files(
@@ -24,53 +20,57 @@ add_message_files(
     akd_fixedPDO_1B20.msg
 )
 
-###################################
-## catkin specific configuration ##
-###################################
-
-
+set(WRAPPER_INSTALL_PATH ${CMAKE_CURRENT_LIST_DIR}/wrapper_install)
+make_directory(${CMAKE_CURRENT_LIST_DIR}/include)
 catkin_package(
     CATKIN_DEPENDS message_runtime
-    INCLUDE_DIRS AKD-Ethercat-Master/include AKD-Ethercat-Master/extern/SOEM/include
-    LIBRARIES AKD_ecat_pkg soem
+    INCLUDE_DIRS include
+    LIBRARIES AKD_ecat soem #Macro assumes these will be in CATKIN_PACKAGE_LIB_DESTINATION. Might break older catkin stuff.
+                                # In that case, maybe add an imported library? The imporated path might be taken.
 )
 
 ###########
 ## Build ##
 ###########
 
-add_library(AKD_ecat_pkg)
+
+include(ExternalProject)
+ExternalProject_Add( AKD_lib 
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${WRAPPER_INSTALL_PATH}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/AKD-Ethercat-Master
+)
+
+#add_library(AKD_ecat STATIC IMPORTED IMPORTED_LOCATION ${WRAPPER_INSTALL_PATH}/lib)
+#add_library(soem STATIC IMPORTED IMPORTED_LOCATION ${WRAPPER_INSTALL_PATH}/lib)
 
 #############
 ## Install ##
 #############
 
+
+
+
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-#message("Catkin include path 2: ${CATKIN_PACKAGE_INCLUDE_DESTINATION}")
-#install(TARGETS AKD_ecat soem
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#)
 
-# Mark cpp header files for installation
-#install(DIRECTORY ${INSTALL_ARTIFACTS_PATH}/include/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#)
+install(DIRECTORY ${WRAPPER_INSTALL_PATH}/lib/
+    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
-#install(DIRECTORY ${INSTALL_ARTIFACTS_PATH}/lib/pkgconfig
-#    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#)
+#Mark cpp header files for installation
+install(DIRECTORY ${WRAPPER_INSTALL_PATH}/include/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.h"
+)
+install(DIRECTORY ${WRAPPER_INSTALL_PATH}/include/
+   DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include
+   FILES_MATCHING PATTERN "*.h"
+)
 
-#install(DIRECTORY ${INSTALL_ARTIFACTS_PATH}/share/akd_ethercat_lib/
-#    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-#)
+install(DIRECTORY ${WRAPPER_INSTALL_PATH}/share/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
-#install(DIRECTORY ${INSTALL_ARTIFACTS_PATH}/share/soem
-#    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-#)
-#file(REMOVE_RECURSE ${INSTALL_ARTIFACTS_PATH})
 
 #############
 ## Testing ##
