@@ -1,0 +1,11 @@
+Header header
+int32    posActual
+int32    posFdback2
+int32    velActual
+uint32   digInputs
+int32    followErr
+uint32   latchPos
+uint16   coeStatus
+int16    tqActual
+uint16   latchStatus
+int16    analogInput

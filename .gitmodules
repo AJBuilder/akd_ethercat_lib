@@ -1,0 +1,3 @@
+[submodule "AKD-Ethercat-Master"]
+	path = AKD-Ethercat-Master
+	url = git@github.com:AJBuilder/AKD-Ethercat-Master.git
