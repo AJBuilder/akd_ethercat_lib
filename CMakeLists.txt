@@ -65,6 +65,7 @@ catkin_package(
 
 include(ExternalProject)
 ExternalProject_Add( AKD_lib 
+    BUILD_ALWAYS 1
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/AKD-Ethercat-Master
     CMAKE_ARGS #-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=${CMAKE_BINARY_DIR}
                -DCMAKE_INSTALL_PREFIX=${CATKIN_DEVEL_PREFIX}
